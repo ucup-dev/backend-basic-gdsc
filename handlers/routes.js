@@ -1,15 +1,18 @@
-const {Router} = require('express')
+const express = require('express')
 const {setupPostHandler} = require('./postHandler.js')
 const {setupUserHandler} = require('./userHandler.js')
 
 /**
  * 
- * @param {Router} router 
+ * @param {express.Express} app 
  */
-function setupHandler(router) {
-    router.use('/post/', setupPostHandler(router))
-    router.use('/user/', setupUserHandler(router))
-    return router
+function setupHandler(app) {
+
+    const userHandlerRouter = express.Router()
+    const postHandlerRouter = express.Router()
+    
+    app.use('/user', setupUserHandler(userHandlerRouter))
+    app.use('/post', setupPostHandler(postHandlerRouter))
 }
 
 module.exports = {setupHandler}

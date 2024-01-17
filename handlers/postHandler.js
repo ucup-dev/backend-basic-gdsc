@@ -10,7 +10,6 @@ const posts = []
 function setupPostHandler(router) {
 
     router.get('/', (req, res) => {
-        console.log(req.params, req.query)
         res.json({
           "data": posts
         })
@@ -18,8 +17,6 @@ function setupPostHandler(router) {
       
     
     router.post('/', (req, res) => {
-        console.log(req.body)
-    
         posts.push({
             "id": getRandomInt(9999999999999999),
             "title": req.body.title,

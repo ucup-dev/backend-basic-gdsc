@@ -1,5 +1,4 @@
 const express = require('express')
-var router = express.Router()
 var bodyParser = require('body-parser')
 const {setupHandler} = require('./handlers/routes.js')
 
@@ -19,8 +18,7 @@ app.get('/', (req, res) => {
   })
 })
 
-app.use('/', setupHandler(router))
-
+setupHandler(app)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

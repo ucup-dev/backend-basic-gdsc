@@ -12,9 +12,7 @@ const users = [
  */
 function setupUserHandler(router) {
 
-    router.get('/user', (req, res) => {
-        // console.log(req.params, req.query)
-        console.log("ini get user")
+    router.get('/', (req, res) => {
         res.json({
           "data": users
         })
