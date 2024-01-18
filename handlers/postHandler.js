@@ -1,26 +1,27 @@
 const {Router} = require('express')
 var {getRandomInt} = require('../utils/randomNumber.js')
+const {myLogger} = require('../middleware/logger.js')
+
 
 const posts = []
 
 /**
- * 
  * @param {Router} router 
  */
 function setupPostHandler(router) {
 
-    router.get('/', (req, res) => {
+    router.get('/', myLogger, (req, res) => {
         res.json({
           "data": posts
         })
     })
-      
     
     router.post('/', (req, res) => {
         posts.push({
             "id": getRandomInt(9999999999999999),
             "title": req.body.title,
-            "description": req.body.description
+            "description": req.body.description,
+            "created_at": req.requestTime
         })
     
         res.json({
