@@ -168,6 +168,16 @@ function setupProductHandler(router, dbConnection) {
     router.put('/accept-order/:order_id', async (req, res) => {
         try {
             
+            if(req.user.role != 'admin') {
+                res.statusCode = 403
+                res.json({
+                    "status": false,
+                    "message": "anda tidak memiliki akses",
+                    "data": null
+                })
+                return 
+            }
+
             const sql = `UPDATE orders SET is_accepted = 1 WHERE orders.id = ${req.params.order_id}`
 
             const [result] = await dbConnection.query(sql)
