@@ -1,15 +1,15 @@
 const express = require('express')
 var bodyParser = require('body-parser')
 const {setupHandler} = require('./handlers/routes.js')
-const {myLogger} = require('./middleware/logger.js')
 const {reqTime} = require('./middleware/requestTime.js')
-const {verifyJWTMiddleware} = require('./middleware/verifyJWTToken.js')
 const {setupDB} = require('./database/db.js')
 const {JWTUtil} = require('./utils/jwt.js')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 const app = express()
 const port = 3000
-
 
 async function main() {
 
@@ -26,9 +26,9 @@ async function main() {
 
   const jwtUtil = new JWTUtil()
 
-  app.get('/', verifyJWTMiddleware(jwtUtil), (req, res) => {
+  app.get('/', (req, res) => {
     res.json({
-      "message": "this is home path"
+      "message": "Belajar Backend Development Bersama GDSC UIN JAKARTA"
     })
   })
 

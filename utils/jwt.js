@@ -10,7 +10,7 @@ class JWTUtil {
         return jwt.sign({
             exp: Math.floor(Date.now() / 1000) + (60 * 60),
             data: payload
-          }, 'secret');
+          }, process.env.JWT_SECRET);
     }
 
     /**
@@ -18,7 +18,7 @@ class JWTUtil {
      * @returns 
      */
     decode(token) {
-        return jwt.verify(token, 'secret');
+        return jwt.verify(token, process.env.JWT_SECRET);
     }
 }
 
