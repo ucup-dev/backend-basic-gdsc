@@ -40,6 +40,7 @@ function setupProductHandler(router, dbConnection) {
         } catch (err) {
             console.log(err);
 
+            res.statusCode = 500
             res.json({
                 "status": false,
                 "message": err,
@@ -80,6 +81,7 @@ function setupProductHandler(router, dbConnection) {
         } catch (err) {
             console.log(err);
 
+            res.statusCode = 500
             res.json({
                 "status": false,
                 "message": err,
@@ -89,7 +91,7 @@ function setupProductHandler(router, dbConnection) {
         }
     })
 
-    router.get('/list-order', async (req, res) => {
+    router.get('/order-owner', async (req, res) => {
         try {
             
             const sql = 'SELECT ord.id as order_id, p.id as product_id, p.name as product_name, u.username as username, ord.quantity as product_quantity, ord.is_accepted as is_accepted FROM orders as ord JOIN products as p ON p.id = ord.product_id JOIN users as u ON u.id = ord.user_id'
@@ -116,6 +118,44 @@ function setupProductHandler(router, dbConnection) {
         } catch (err) {
             console.log(err);
 
+            res.statusCode = 500
+            res.json({
+                "status": false,
+                "message": err,
+                "data": null
+            })
+            return 
+        }
+    })
+
+    router.get('/order-user', async (req, res) => {
+        try {
+            
+            const sql = `SELECT ord.id as order_id, p.id as product_id, p.name as product_name, u.username as username, ord.quantity as product_quantity, ord.is_accepted as is_accepted FROM orders as ord JOIN products as p ON p.id = ord.product_id JOIN users as u ON u.id = ord.user_id WHERE u.id = ${req.user.userID}`
+
+            const [rows] = await dbConnection.query(sql)
+
+            if(req.user.role != 'user') {
+                res.statusCode = 403
+                res.json({
+                    "status": false,
+                    "message": "anda tidak memiliki akses",
+                    "data": null
+                })
+                return 
+            }
+
+            res.json({
+                "status": true,
+                "message": "ok",
+                "data": rows
+            })
+            return 
+
+        } catch (err) {
+            console.log(err);
+
+            res.statusCode = 500
             res.json({
                 "status": false,
                 "message": err,
@@ -142,6 +182,7 @@ function setupProductHandler(router, dbConnection) {
         } catch (err) {
             console.log(err);
 
+            res.statusCode = 500
             res.json({
                 "status": false,
                 "message": err,
@@ -170,6 +211,7 @@ function setupProductHandler(router, dbConnection) {
         } catch (err) {
             console.log(err);
 
+            res.statusCode = 500
             res.json({
                 "status": false,
                 "message": err,

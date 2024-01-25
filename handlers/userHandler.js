@@ -40,6 +40,7 @@ function setupUserHandler(router, dbConnection) {
             return
 
         } catch (error) {
+            res.statusCode = 500
             res.json({
                 status: false,
                 message: error.message,
@@ -62,6 +63,7 @@ function setupUserHandler(router, dbConnection) {
             const [rows] = await dbConnection.query(sql)
 
             if(rows.length == 0) {
+                res.statusCode = 400
                 res.json({
                     status: false,
                     message: "kredential tidak valid",
@@ -71,6 +73,7 @@ function setupUserHandler(router, dbConnection) {
             }
             
             if(!hashFunction.compare(password, rows[0].password)) {
+                res.statusCode = 400
                 res.json({
                     status: false,
                     message: "kredential tidak valid",
@@ -96,6 +99,8 @@ function setupUserHandler(router, dbConnection) {
 
         } catch (error) {
             console.log(error)
+            
+            res.statusCode = 500
             res.json({
                 status: false,
                 message: error.message,
