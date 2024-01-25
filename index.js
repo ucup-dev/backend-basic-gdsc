@@ -3,8 +3,9 @@ var bodyParser = require('body-parser')
 const {setupHandler} = require('./handlers/routes.js')
 const {myLogger} = require('./middleware/logger.js')
 const {reqTime} = require('./middleware/requestTime.js')
-const {authentication} = require('./middleware/authentication.js')
+const {verifyJWTMiddleware} = require('./middleware/verifyJWTToken.js')
 const {setupDB} = require('./database/db.js')
+const {JWTUtil} = require('./utils/jwt.js')
 
 const app = express()
 const port = 3000
@@ -23,13 +24,15 @@ async function main() {
   app.use(reqTime)
   // app.use(myLogger)
 
-  app.get('/', authentication, (req, res) => {
+  const jwtUtil = new JWTUtil()
+
+  app.get('/', verifyJWTMiddleware(jwtUtil), (req, res) => {
     res.json({
       "message": "this is home path"
     })
   })
 
-  setupHandler(app, dbConnection)
+  setupHandler(app, dbConnection, jwtUtil)
 
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

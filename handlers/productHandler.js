@@ -1,0 +1,124 @@
+const {Router} = require('express')
+const mysql = require('mysql2')
+const {makeSlug} = require('../utils/stringFunction.js')
+
+/**
+ * 
+ * @param {Router} router 
+ * @param {mysql.Connection} dbConnection
+ */
+function setupProductHandler(router, dbConnection) {
+
+    router.post('/', async (req, res) => {
+        try {
+
+            console.log(req.user)
+
+            if(req.user.role != 'admin') {
+                res.statusCode = 403
+                res.json({
+                    "status": false,
+                    "message": "anda memiliki akses",
+                    "data": null
+                })
+                return 
+            }
+
+            const sql =
+            `INSERT INTO products (name, slug, stock, type) VALUES 
+            ('${req.body.name}', '${makeSlug(req.body.name)}', '${req.body.stock}', '${req.body.type}')`;
+        
+            const [result] = await dbConnection.query(sql);
+
+            res.json({
+                "status": true,
+                "message": "ok",
+                "data": result
+            })
+            return 
+
+        } catch (err) {
+            console.log(err);
+
+            res.json({
+                "status": false,
+                "message": err,
+                "data": null
+            })
+            return 
+        }
+    })
+
+
+    router.post('/order', async (req, res) => {
+        try {
+
+            console.log(req.user)
+
+            if(req.user.role != 'user') {
+                res.statusCode = 403
+                res.json({
+                    "status": false,
+                    "message": "anda tidak memiliki akses",
+                    "data": null
+                })
+                return 
+            }
+
+            const sql =
+            `INSERT INTO orders (product_id, user_id, quantity) VALUES 
+            ('${req.body.productId}', '${req.user.userID}', '${req.body.quantity}')`;
+        
+            const [result] = await dbConnection.query(sql);
+
+            res.json({
+                "status": true,
+                "message": "ok",
+                "data": result
+            })
+            return 
+
+        } catch (err) {
+            console.log(err);
+
+            res.json({
+                "status": false,
+                "message": err,
+                "data": null
+            })
+            return 
+        }
+    })
+
+    router.get('/', async (req, res) => {
+        
+        try {
+            const sql = 'SELECT * FROM `products`';
+          
+            const [rows] = await dbConnection.query(sql);
+          
+            // console.log(rows);
+    
+            res.json({
+                "status": true,
+                "message": "ok",
+                "data": rows
+            })
+            return 
+
+        } catch (err) {
+            console.log(err);
+
+            res.json({
+                "status": false,
+                "message": err,
+                "data": null
+            })
+            return 
+        }
+    })
+
+    return router
+}
+
+module.exports = {setupProductHandler}
