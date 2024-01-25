@@ -49,7 +49,6 @@ function setupProductHandler(router, dbConnection) {
         }
     })
 
-
     router.post('/order', async (req, res) => {
         try {
 
@@ -70,6 +69,68 @@ function setupProductHandler(router, dbConnection) {
             ('${req.body.productId}', '${req.user.userID}', '${req.body.quantity}')`;
         
             const [result] = await dbConnection.query(sql);
+
+            res.json({
+                "status": true,
+                "message": "ok",
+                "data": result
+            })
+            return 
+
+        } catch (err) {
+            console.log(err);
+
+            res.json({
+                "status": false,
+                "message": err,
+                "data": null
+            })
+            return 
+        }
+    })
+
+    router.get('/list-order', async (req, res) => {
+        try {
+            
+            const sql = 'SELECT ord.id as order_id, p.id as product_id, p.name as product_name, u.username as username, ord.quantity as product_quantity, ord.is_accepted as is_accepted FROM orders as ord JOIN products as p ON p.id = ord.product_id JOIN users as u ON u.id = ord.user_id'
+
+            const [rows] = await dbConnection.query(sql)
+
+            if(req.user.role != 'admin') {
+                res.statusCode = 403
+                res.json({
+                    "status": false,
+                    "message": "anda tidak memiliki akses",
+                    "data": null
+                })
+                return 
+            }
+
+            res.json({
+                "status": true,
+                "message": "ok",
+                "data": rows
+            })
+            return 
+
+        } catch (err) {
+            console.log(err);
+
+            res.json({
+                "status": false,
+                "message": err,
+                "data": null
+            })
+            return 
+        }
+    })
+
+    router.put('/accept-order/:order_id', async (req, res) => {
+        try {
+            
+            const sql = `UPDATE orders SET is_accepted = 1 WHERE orders.id = ${req.params.order_id}`
+
+            const [result] = await dbConnection.query(sql)
 
             res.json({
                 "status": true,
