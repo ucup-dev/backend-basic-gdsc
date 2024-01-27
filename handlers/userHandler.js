@@ -2,13 +2,15 @@ const {Router} = require('express')
 const mysql = require('mysql2')
 const {HashFunction} = require('../utils/hash.js')
 const { JWTUtil } = require('../utils/jwt')
+const {verifyJWTMiddleware} = require('../middleware/verifyJWTToken.js')
 
 /**
  * 
  * @param {Router} router 
  * @param {mysql.Connection} dbConnection
+ * @param {verifyJWTMiddleware} verifyJWTMiddleware
  */
-function setupUserHandler(router, dbConnection) {
+function setupUserHandler(router, dbConnection, verifyJWTMiddleware) {
 
     const hashFunction = new HashFunction()
     const jwtUtil = new JWTUtil()
@@ -108,6 +110,15 @@ function setupUserHandler(router, dbConnection) {
             })
             return
         }
+    })
+
+    router.get('/', verifyJWTMiddleware, async (req, res) => {
+        res.json({
+            status: true,
+            message: "ok",
+            data: req.user
+        })
+        return
     })
 
     return router

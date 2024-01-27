@@ -16,7 +16,7 @@ function setupHandler(app, dbConnection, jwtUtil) {
     const postHandlerRouter = express.Router()
     const productHandlerRouter = express.Router()
     
-    app.use('/user', setupUserHandler(userHandlerRouter, dbConnection))
+    app.use('/user', setupUserHandler(userHandlerRouter, dbConnection, verifyJWTMiddleware(jwtUtil)))
     app.use('/post', setupPostHandler(postHandlerRouter, dbConnection))
     app.use('/product', verifyJWTMiddleware(jwtUtil), setupProductHandler(productHandlerRouter, dbConnection))
 }

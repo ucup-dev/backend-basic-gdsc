@@ -18,15 +18,15 @@ function setupProductHandler(router, dbConnection) {
                 res.statusCode = 403
                 res.json({
                     "status": false,
-                    "message": "anda memiliki akses",
+                    "message": "anda tidak memiliki akses",
                     "data": null
                 })
                 return 
             }
 
             const sql =
-            `INSERT INTO products (name, slug, stock, type) VALUES 
-            ('${req.body.name}', '${makeSlug(req.body.name)}', '${req.body.stock}', '${req.body.type}')`;
+            `INSERT INTO products (name, slug, stock, type, price, image) VALUES 
+            ('${req.body.name}', '${makeSlug(req.body.name)}', '${req.body.stock}', '${req.body.type}', '${req.body.price}', '${req.body.image}')`;
         
             const [result] = await dbConnection.query(sql);
 
